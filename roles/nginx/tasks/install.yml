@@ -1,0 +1,16 @@
+---
+- name: add nginx repository
+  template: >
+    src=nginx.list.j2
+    dest=/etc/apt/sources.list.d/nginx.list
+
+- name: add nginx repository key
+  apt_key: url=http://nginx.org/keys/nginx_signing.key
+
+- name: install nginx
+  apt: >
+    name=nginx
+    state=latest
+    update_cache=yes
+  notify:
+    - restart nginx

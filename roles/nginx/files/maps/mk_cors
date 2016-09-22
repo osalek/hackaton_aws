@@ -1,0 +1,5 @@
+map $http_origin $cors_header {
+    default "";
+    "~^https?://[^/]+\.mackeeper\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://mackeeper\.com(:[0-9]+)?$" "$http_origin";
+}

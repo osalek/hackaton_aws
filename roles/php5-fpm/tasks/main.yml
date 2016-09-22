@@ -1,0 +1,44 @@
+---
+- include: install.yml
+  tags:
+    - install_php5-fpm
+    - install
+
+- include: modules_php5.yml
+  when: php5_modules|lower != 'none'
+  tags:
+    - modules_php5
+
+- include: modules_php5_deb.yml
+  when: php5_modules_deb|lower != 'none'
+  tags:
+    - modules_php5_deb
+
+- include: modules_php.yml
+  when: php_modules|lower != 'none'
+  tags:
+    - modules_php
+
+- include: configure.yml
+  tags:
+    - configure_php5-fpm
+    - configure
+
+- include: pools.yml
+  when: php_fpm_pools|lower != 'none'
+  tags:
+    - pools_php5-fpm
+    - pools
+
+- include: modules_pear.yml
+  when: php_modules_pear|lower != 'none'
+  tags:
+    - modules_pear
+
+- include: modules_pecl.yml
+  tags:
+    - modules_pecl
+
+- include: modules_source.yml
+  tags:
+    - modules_source

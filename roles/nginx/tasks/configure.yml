@@ -1,0 +1,79 @@
+---
+- name: copy nginx.conf
+  template: >
+    src=nginx.conf.j2
+    dest=/etc/nginx/nginx.conf
+  notify:
+    - reload nginx
+
+- name: copy fastcgi_params
+  template: >
+    src=fastcgi_params.j2
+    dest=/etc/nginx/fastcgi_params
+  notify:
+    - reload nginx
+
+- name: create directories
+  file: >
+    path={{ item.path }}
+    state=directory
+    owner={{ item.owner }}
+    group={{ item.group }}
+  with_items:
+    - { path: /etc/nginx/vhosts, owner: root, group: root }
+    - { path: /var/www, owner: www-data, group: www-data }
+    - { path: /var/www/default, owner: www-data, group: www-data }
+
+- name: create vhosts.d directory
+  file: >
+    path=/etc/nginx/vhosts.d
+    state=directory
+    owner=www-data
+    group=www-data
+  when: ENV is defined and ENV == 'development'
+
+- name: create sites directory
+  file: >
+    path={{ item.path }}
+    state=directory
+    owner={{ item.owner }}
+    group={{ item.group }}
+  with_items:
+    - { path: /usr/sites, owner: www-data, group: www-data }
+  when: nginx_sites|default(None) != None
+
+- name: create cache directory
+  file: >
+    path={{ item.path }}
+    state=directory
+    owner={{ item.owner }}
+    group={{ item.group }}
+  with_items:
+    - { path: /var/nginxcache, owner: www-data, group: www-data }
+  when: nginx_cache|default(None) != None
+
+- name: create index.html in /var/www/default
+  lineinfile: >
+    dest=/var/www/default/index.html
+    line='All-OK'
+    create=true
+
+- name: activate logrotate
+  copy: >
+    src=nginx
+    dest=/etc/logrotate.d
+
+- name: change log directory owner
+  file: >
+    path=/var/log/nginx
+    state=directory
+    owner=www-data
+    group=adm
+
+- name: change log directory files permissions
+  file: >
+    path=/var/log/nginx
+    state=directory
+    owner=www-data
+    group=adm
+    recurse=yes

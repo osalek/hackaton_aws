@@ -1,0 +1,7 @@
+---
+- name: copy sysctl for mongodb
+  copy: >
+    src=mongodb.conf
+    dest=/etc/sysctl.d/mongodb.conf
+  notify:
+    - apply sysctl

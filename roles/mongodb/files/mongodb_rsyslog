@@ -1,0 +1,13 @@
+/var/log/mongodb/*.log {
+        daily
+        rotate 60
+        compress
+        delaycompress
+        notifempty
+        missingok
+        sharedscripts
+        postrotate
+                [ -f /var/run/mongod.pid ] && kill -USR1 `cat /var/run/mongod.pid`
+                find /var/log/mongodb/ -type f -regex ".*\.\(log.[0-9].*-[0-9].*\)" -exec rm {} \;
+        endscript
+}

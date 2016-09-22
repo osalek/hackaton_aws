@@ -1,0 +1,5 @@
+---
+- name: activate mongos logrotate
+  copy: >
+    src=mongos
+    dest=/etc/logrotate.d/mongodb

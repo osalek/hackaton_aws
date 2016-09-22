@@ -1,0 +1,7 @@
+{% for v in nagios_nrpe_plugins %}
+{% if v.options is defined %}
+command[{{ v.name }}]=/usr/lib/nagios/plugins/{{ v.command }} {{ v.options }}
+{% else %}
+command[{{ v.name }}]=/usr/lib/nagios/plugins/{{ v.command }}
+{% endif %}
+{% endfor %}

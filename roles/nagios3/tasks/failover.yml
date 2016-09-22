@@ -1,0 +1,23 @@
+---
+- name: create folder
+  file: path=/root/bin state=directory
+  when: nagios3.master is defined
+
+- name: copy check master script
+  template: src=check_master.sh.j2 dest=/root/bin/check_master.sh mode=0755
+  when: nagios3.master is defined
+
+- name: create slave status file
+  copy: content='0{{ '\n' }}' dest=/var/lib/nagios3/rw/slave.status owner=root group=www-data mode=0644
+  when: nagios3.master is defined
+
+- name: add crontab job
+  cron: name="Nagios check master" user="root" job="/root/bin/check_master.sh" cron_file=nagios3
+  when: nagios3.master is defined
+
+- name: add nrpe config file on master
+  copy: content='command[check_nagios]=/usr/lib/nagios/plugins/check_nagios -F /var/cache/nagios3/status.dat -e 1 -C /usr/sbin/nagios3{{ '\n' }}' dest=/etc/nagios/nrpe.d/nagios.cfg
+  when: nagios3.master is defined
+  delegate_to: "{{ nagios3.master }}"
+  notify:
+    - restart nagios-nrpe-server  

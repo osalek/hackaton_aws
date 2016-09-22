@@ -1,0 +1,10 @@
+---
+- name: install php5 modules
+  apt: >
+    name="php5-{{ item }}"
+    state=latest
+    update_cache=yes
+    cache_valid_time=600
+  with_items: "{{ php5_modules_deb }}"
+  notify:
+    - reload php5-fpm

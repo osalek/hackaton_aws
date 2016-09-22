@@ -1,0 +1,337 @@
+# Some generic hostgroup definitions
+
+# A list of your http web servers
+define hostgroup {
+        hostgroup_name  http_{{ item.key }}
+		alias           HTTP Servers
+        }
+
+# A list of your alt http web servers
+define hostgroup {
+        hostgroup_name  http_8080_{{ item.key }}
+                alias           HTTP Servers
+        }
+
+# A list of your https web servers
+define hostgroup {
+        hostgroup_name  https_{{ item.key }}
+                alias           HTTPS Servers
+        }
+
+# A list of your ssh servers
+define hostgroup {
+        hostgroup_name  ssh_{{ item.key }}
+		alias           SSH Servers
+        }
+
+# A list of your icmp servers
+define hostgroup {
+        hostgroup_name  ping_{{ item.key }}
+                alias           PING Servers
+        }
+
+# A list of your disk servers
+define hostgroup {
+        hostgroup_name  disk_{{ item.key }}
+                alias           Disk Servers
+        }
+
+# A list of your dns servers
+define hostgroup {
+        hostgroup_name  dns_{{ item.key }}
+                alias           DNS Servers
+        }
+
+# A list of your mdadm servers
+define hostgroup {
+        hostgroup_name  mdadm_{{ item.key }}
+                alias           RAID Servers
+        }
+
+# A list of your hwraid servers
+define hostgroup {
+        hostgroup_name  hwraid_{{ item.key }}
+                alias           RAID Servers
+        }
+
+# A list of your mongodb servers
+define hostgroup {
+        hostgroup_name  mongodb_{{ item.key }}
+                alias           Mongodb Servers
+        }
+
+# A list of your mongodb nrpe servers
+define hostgroup {
+        hostgroup_name  mongodb_nrpe_{{ item.key }}
+                alias           Mongodb Servers
+        }
+
+# A list of your mongodb 3.0 servers
+define hostgroup {
+        hostgroup_name  mongodb3_{{ item.key }}
+                alias           Mongodb Servers
+        }
+
+# A list of your mongodb 3.0 nrpe servers
+define hostgroup {
+        hostgroup_name  mongodb3_nrpe_{{ item.key }}
+                alias           Mongodb Servers
+        }
+
+# A list of your mongos servers
+define hostgroup {
+        hostgroup_name  mongos_{{ item.key }}
+                alias           Mongos Servers
+        }
+
+# A list of your mongos servers
+define hostgroup {
+        hostgroup_name  mongos_multi_{{ item.key }}
+                alias           Mongos Servers
+        }
+
+# A list of your mongos servers
+define hostgroup {
+        hostgroup_name  mongos_status_{{ item.key }}
+                alias           Mongos Servers
+        }
+
+# A list of your arbiter servers
+define hostgroup {
+        hostgroup_name  arbiter_{{ item.key }}
+                alias           Arbiter Servers
+        }
+
+# A list of your redis servers
+define hostgroup {
+        hostgroup_name  redis_{{ item.key }}
+                alias           Redis Servers
+        }
+
+# A list of your gearman servers
+define hostgroup {
+        hostgroup_name	gearman_{{ item.key }}
+                alias           Gearman Servers
+}
+
+# A list of your mysql servers
+define hostgroup {
+        hostgroup_name  mysql_{{ item.key }}
+                alias           Mysql Servers
+}
+
+# A list of your mysql master servers
+define hostgroup {
+        hostgroup_name  mysql-master_{{ item.key }}
+                alias           Mysql Master Servers
+}
+
+# A list of your mysql slave servers
+define hostgroup {
+        hostgroup_name  mysql-slave_{{ item.key }}
+                alias           Mysql Slave Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi1_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi2_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi3_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi4_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi5_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi6_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi7_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi8_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi9_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your mysql slave multi servers
+define hostgroup {
+        hostgroup_name  mysql-slave-multi10_{{ item.key }}
+                alias           Mysql Slave Multi Servers
+}
+
+# A list of your ofd servers
+define hostgroup {
+        hostgroup_name  ofd_{{ item.key }}
+                alias           File Descriptors
+}
+
+# A list of your nfs servers
+define hostgroup {
+        hostgroup_name  nfs_{{ item.key }}
+                alias           NFS
+}
+
+# A list of your haproxy servers
+define hostgroup {
+        hostgroup_name  haproxy_{{ item.key }}
+                alias           Haproxy
+}
+
+# A list of your haproxy nrpe servers
+define hostgroup {
+        hostgroup_name  haproxy-nrpe_{{ item.key }}
+                alias           Haproxy
+}
+
+# A list of your haproxy https servers
+define hostgroup {
+        hostgroup_name  haproxy-https_{{ item.key }}
+                alias           Haproxy Https         
+}
+
+# A list of your haproxy servers check over tcp
+define hostgroup {
+        hostgroup_name  haproxy-tcp_{{ item.key }}
+                alias           Haproxy
+}
+
+# A list of your haproxy https servers check over tcp
+define hostgroup {
+        hostgroup_name  haproxy-https-tcp_{{ item.key }}
+                alias           Haproxy Https
+}
+
+# A list of your unix memory servers
+define hostgroup {
+        hostgroup_name  unixmem_{{ item.key }}
+                alias           Unix Memory
+}
+
+# A list of your smtp servers
+define hostgroup {
+        hostgroup_name  smtp_{{ item.key }}
+                alias           SMTP
+}
+
+# A list of your smtp nrpe servers
+define hostgroup {   
+        hostgroup_name  smtp_nrpe_{{ item.key }}
+                alias           SMTP       
+}
+
+# A list of your smtp haproxy servers
+define hostgroup {   
+        hostgroup_name  smtp_haproxy_{{ item.key }}
+                alias           SMTP Haproxy      
+}
+
+# A list of your megabackup awsproxy servers
+define hostgroup {
+        hostgroup_name	mb-awsproxy_{{ item.key }}
+                alias           Awsproxy Instances
+}
+
+# A list of your megabackup cleaner servers
+define hostgroup {
+        hostgroup_name  mb-cleaner_{{ item.key }}
+                alias           Cleaner Instances
+}
+
+# A list of your megabackup daemon servers
+define hostgroup {
+        hostgroup_name	mb-daemon_{{ item.key }}
+                alias           Daemon Instances
+}
+
+# A list of your megabackup doc servers
+define hostgroup {
+        hostgroup_name  mb-doc_{{ item.key }}
+		alias		Doc Instances
+}
+
+# A list of your megabackup gear servers
+define hostgroup {
+        hostgroup_name	mb-gear_{{ item.key }}
+                alias           Gear Instances
+}
+
+# A list of your megabackup patcher servers
+define hostgroup {
+        hostgroup_name  mb-patcher_{{ item.key }}
+                alias           Patcher Instances
+}
+
+# A list of your megabackup photo servers
+define hostgroup {
+        hostgroup_name	mb-photo_{{ item.key }}
+                alias           Photo Instances
+}
+
+# A list of your megabackup photo servers
+define hostgroup {
+        hostgroup_name	mb-photomon_{{ item.key }}
+                alias           Photomon Daemon
+}
+
+# A list of your megabackup polling servers
+define hostgroup {
+        hostgroup_name	mb-polling_{{ item.key }}
+                alias           Polling Instances
+}
+
+# A list of your megabackup transcoder servers
+define hostgroup {
+        hostgroup_name  mb-transcoder_{{ item.key }}
+                alias           Transcoder Instances
+}
+
+# A list of your megabackup web servers
+define hostgroup {
+        hostgroup_name	mb-web_{{ item.key }}
+                alias           Web Instances
+}
+
+# A list of your websbee servers
+define hostgroup {
+        hostgroup_name  websbee_{{ item.key }}   
+                alias           Websbee Servers
+}
+
+# A list of your rabbitmq servers
+define hostgroup {
+        hostgroup_name  rabbitmq_{{ item.key }}
+                alias           Rabbitmq Servers
+}

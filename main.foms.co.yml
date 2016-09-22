@@ -1,0 +1,8 @@
+---
+- hosts: hackaton-server
+#  remote_user: root
+  become: yes
+
+  roles:
+    - { role: nagios3, tags: nagios3 }
+    - { role: mongodb, tags: mongodb }

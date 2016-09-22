@@ -1,0 +1,75 @@
+---
+- name: check if certificate exists
+  stat: >
+    path=/etc/mongodb/ca/pem/{{ inventory_hostname }}.pem
+  delegate_to: "{{ mongodb_ca }}"
+  register: check_certificate
+
+- name: create private key
+  command: >
+    openssl genrsa -out private/{{ inventory_hostname }}.key 4096
+    chdir=/etc/mongodb/ca
+  delegate_to: "{{ mongodb_ca }}"
+  when: not check_certificate.stat.exists
+
+- name: create csr
+  command: >
+    openssl req -config openssl.cnf -new \
+      -subj '/C=US/ST=CA/O=Kromtech/OU=MongoDB/CN={{ inventory_hostname }}' \
+      -key private/{{ inventory_hostname }}.key \
+      -out csr/{{ inventory_hostname }}.csr
+    chdir=/etc/mongodb/ca
+  delegate_to: "{{ mongodb_ca }}"
+  when: not check_certificate.stat.exists
+
+- name: create certificate
+  command: >
+    openssl ca -batch -config openssl.cnf -days 3650 \
+      -in csr/{{ inventory_hostname }}.csr \
+      -out certs/{{ inventory_hostname }}.crt \
+      -keyfile private/ca.key -cert certs/ca.crt \
+      -policy policy_anything
+    chdir=/etc/mongodb/ca
+  delegate_to: "{{ mongodb_ca }}"
+  when: not check_certificate.stat.exists
+
+- name: create pem certificate
+  shell: >
+    cat private/{{ inventory_hostname }}.key \
+      certs/{{ inventory_hostname }}.crt \
+      > pem/{{ inventory_hostname }}.pem
+    chdir=/etc/mongodb/ca
+  delegate_to: "{{ mongodb_ca }}"
+  when: not check_certificate.stat.exists
+
+- name: fetch certificates to local host
+  fetch: >
+    src=/etc/mongodb/ca/{{ item }}
+    dest=/var/tmp/{{ inventory_hostname }}/
+    flat=yes
+    validate_md5=no
+  with_items:
+    - certs/ca.crt
+    - "pem/{{ inventory_hostname }}.pem"
+  delegate_to: "{{ mongodb_ca }}"
+
+- name: create directory for certificates
+  file: >
+    path=/etc/mongodb/ssl
+    state=directory
+
+- name: copy certificates to remote host
+  copy: >
+    src=/var/tmp/{{ inventory_hostname }}/{{ item }}
+    dest=/etc/mongodb/ssl
+    mode=0640
+    group=mongodb
+  with_items:
+    - ca.crt
+    - "{{ inventory_hostname }}.pem"
+
+- name: delete certificates directory on local host
+  local_action: >
+    file
+    path=/var/tmp/{{ inventory_hostname }}
+    state=absent

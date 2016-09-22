@@ -1,0 +1,11 @@
+---
+- name: change ulimit
+  template: >
+    src=ulimit.j2
+    dest=/etc/security/limits.d/ulimit.conf
+
+- name: change pam.d session
+  lineinfile: >
+    dest=/etc/pam.d/common-session
+    insertafter=EOF
+    line='session required pam_limits.so'

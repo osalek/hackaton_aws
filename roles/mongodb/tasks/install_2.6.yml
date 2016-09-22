@@ -1,0 +1,25 @@
+---
+- name: add mongodb-10gen repository
+  copy: >
+    src=mongodb.list
+    dest=/etc/apt/sources.list.d/mongodb.list
+  
+- name: add mongodb-10gen repository key
+  apt_key: >
+    id=7F0CEB10
+    url=http://docs.mongodb.org/10gen-gpg-key.asc
+
+- name: install mongodb server
+  apt: >
+    name={{ item }}
+    state=present
+    force=yes
+    update_cache=yes
+  with_items:
+    - mongodb-org-server={{ mongodb.version }}
+    - mongodb-org-shell={{ mongodb.version }}
+    - mongodb-org-tools={{ mongodb.version }}
+
+- name: install numactl
+  apt: >
+    name=numactl

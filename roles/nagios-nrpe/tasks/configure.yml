@@ -1,0 +1,23 @@
+---
+- name: change nrpe config file
+  lineinfile: >
+    dest={{ item.dest }}
+    regexp={{ item.regexp }}
+    line={{ item.line }}
+    state=present
+  with_items:
+    - { dest: /etc/nagios/nrpe.cfg,
+        regexp: "^allowed_hosts",
+        line: "allowed_hosts={{ nagios_nrpe_allowed_hosts }}" }
+    - { dest: /etc/nagios/nrpe.cfg,
+        regexp: "^dont_blame_nrpe",
+        line: "dont_blame_nrpe=1" }
+  notify:
+    - restart nagios-nrpe-server
+
+- name: copy nrpe_local config file
+  template: >
+    src=nrpe_local.cfg.j2
+    dest=/etc/nagios/nrpe_local.cfg
+  notify:
+    - restart nagios-nrpe-server

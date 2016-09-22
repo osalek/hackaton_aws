@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: install and configure nagios3 server
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - squeeze
+    - wheezy
+  categories:
+  - monitoring
+dependencies:
+  - { role: nginx, tags: nginx }
+  - { role: php5-fpm, tags: php5-fpm }
+  - { role: ulimit, tags: ulimit }

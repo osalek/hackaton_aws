@@ -1,0 +1,45 @@
+---
+- name: add mongodb-10gen repository
+  copy: >
+    src=mongodb.list
+    dest=/etc/apt/sources.list.d/mongodb.list
+  
+- name: add mongodb-10gen repository key
+  apt_key: >
+    id=7F0CEB10
+    url=http://docs.mongodb.org/10gen-gpg-key.asc
+
+- name: install mongos
+  apt: >
+    name=mongodb-10gen={{ mongodb.version }}
+    state=present
+    force=yes
+    update_cache=yes
+  notify:
+    - restart mongos
+
+- name: check if mongodb init.d script exists
+  stat: >
+    path=/etc/init.d/mongodb
+  register: stat_mongodb
+
+- name: stop mongodb service
+  service: >
+    name=mongodb
+    state=stopped
+  when: stat_mongodb.stat.exists
+
+- name: unset mongodb autostart
+  service: >
+    name=mongodb
+    enabled=no
+  when: stat_mongodb.stat.exists
+
+- name: delete mongodb files
+  file: >
+    path={{ item }}
+    state=absent
+  with_items:
+    - /var/log/mongodb/mongodb.log
+    - /etc/init.d/mongodb
+    - /etc/mongodb.conf

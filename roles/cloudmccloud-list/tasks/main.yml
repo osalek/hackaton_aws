@@ -1,0 +1,14 @@
+---
+- name: add cloudmccloud repository
+  template: >
+    src=cloudmccloud.list.j2
+    dest=/etc/apt/sources.list.d/cloudmccloud.list
+  
+- name: add cloudmccloud repository key
+  apt_key: >
+    url=http://debian.cloudmccloud.com/cloudmccloud-public.key
+    state=present
+
+- name: apt-cache update
+  apt: >
+    update_cache=yes

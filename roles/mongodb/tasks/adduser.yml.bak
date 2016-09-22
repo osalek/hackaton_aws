@@ -1,0 +1,22 @@
+---
+- name: install python-pip
+  apt: name=python-pip
+
+- name: install pymongo module
+  pip: name=pymongo
+
+- name: check if database root user exists
+  command: >
+    /usr/bin/mongo admin --quiet -u root -p {{ lookup('file', playbook_dir + '/vars/secrets/mongodb/' + inventory_hostname + '/root') }} --eval 'db.system.users.find({user: "root", roles:[{role: "root", db: "admin"}]}).count() > 0'
+  register: check_user
+  changed_when: false
+  failed_when: "'ERROR' in check_user.stderr"
+
+- name: create database root user
+  mongodb_user: >
+    database=admin
+    name=root
+    password={{ lookup('file', playbook_dir + '/vars/secrets/mongodb/' + inventory_hostname + '/root') }}
+    replica_set={{ mongodb.replset.name }}
+    roles='root'
+  when: check_user.stdout.find('Authentication failed') != -1  

@@ -1,0 +1,6 @@
+---
+nagios_nrpe_allowed_hosts: 127.0.0.1,67.205.74.104,72.251.246.230
+nagios_nrpe_plugins:
+  - name: check_all_disks
+    command: check_disk
+    options: -w '20%' -c '10%' -e

@@ -1,0 +1,50 @@
+---
+## MONGODB
+- name: install depencies
+  apt: name={{ item }}
+  with_items:  
+    - git
+    - python-pip
+    
+- name: install mongodb plugin
+  git: repo=https://github.com/mzupan/nagios-plugin-mongodb.git dest=/usr/lib/nagios/plugins/mongodb accept_hostkey=yes
+
+- name: install depencies for mongodb plugin
+  pip: name=pymongo
+
+- name: upgrade pymongo package
+  pip: name=pymongo extra_args='--upgrade'
+
+- name: copy config file for mongodb plugins
+  copy: src=plugins/config/mongodb.cfg dest=/etc/nagios-plugins/config
+
+## HAPROXY
+- name: copy config file for haproxy plugin
+  copy: src=plugins/config/haproxy.cfg dest=/etc/nagios-plugins/config
+
+## HTTP
+- name: copy config file for http plugin
+  copy: src=plugins/config/http.cfg dest=/etc/nagios-plugins/config
+
+## MEGABACKUP
+- name: copy config file for megabackup plugin
+  copy: src=plugins/config/megabackup.cfg dest=/etc/nagios-plugins/config
+
+## MYSQL
+- name: copy config file for mysql plugin
+  copy: src=plugins/config/mysql_replication.cfg dest=/etc/nagios-plugins/config
+
+## NRPE
+- name: copy config file for nrpe plugin
+  copy: src=plugins/config/check_nrpe.cfg dest=/etc/nagios-plugins/config
+
+## PING
+- name: copy config file for ping plugin
+  copy: src=plugins/config/ping.cfg dest=/etc/nagios-plugins/config
+
+## PLUGINS
+- name: copy nagios plugins
+  copy: src=plugins/{{ item }} dest=/usr/lib/nagios/plugins owner=root group=root mode=0755
+  with_items:
+    - zeonagios
+    - zeonagios-megabackup

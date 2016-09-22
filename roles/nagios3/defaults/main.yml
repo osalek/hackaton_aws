@@ -1,0 +1,4 @@
+---
+nagios3_htpasswd:
+  - user: nagiosadmin
+    password: nagiosadmin

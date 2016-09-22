@@ -1,0 +1,3 @@
+---
+ulimit_hard: 65536
+ulimit_soft: 65536

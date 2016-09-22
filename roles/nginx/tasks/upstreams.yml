@@ -1,0 +1,41 @@
+---
+- name: create upstreams directory
+  file: >
+    path=/etc/nginx/upstreams
+    state=directory
+  with_items: '{{ nginx_upstreams }}'
+
+- name: add upstream(s)
+  template: >
+    src=upstreams/{{ item.template }}.j2
+    dest=/etc/nginx/upstreams/{{ item.name }}
+  with_items: '{{ nginx_upstreams }}'
+  when: item.state|default('present') == 'present'
+  notify:
+    - reload nginx
+
+- name: check unmanaged upstream(s)
+  shell: ls -1p /etc/nginx/upstreams | grep -v /
+  register: unmanaged_files
+  changed_when: false
+
+- name: whitelist managed upstream(s)
+  set_fact: managed_files="{{ nginx_upstreams|map(attribute='name')|list }}"
+
+- name: delete unmanaged upstream(s)
+  file: >
+    path=/etc/nginx/upstreams/{{ item }}
+    state=absent
+  with_items: '{{ unmanaged_files.stdout_lines }}'
+  when: item not in managed_files
+  notify:
+    - reload nginx
+
+- name: delete upstream(s)
+  file: >
+    path=/etc/nginx/upstreams/{{ item.name }}
+    state=absent
+  with_items: '{{ nginx_upstreams }}'
+  when: item.state|default('present') == 'absent'
+  notify:
+    - reload nginx

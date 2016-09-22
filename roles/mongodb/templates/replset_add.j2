@@ -1,0 +1,13 @@
+{% if mongodb.bind is defined %}
+{% for host in mongodb.replset.secondary %}
+rs.add("{{ host }}:{{ mongodb.bind.port }}")
+sleep(8000)
+{% endfor %}
+printjson(rs.status())
+{% else %}
+{% for host in mongodb.replset.secondary %}
+rs.add("{{ host }}:27017")
+sleep(8000)
+{% endfor %}
+printjson(rs.status())
+{% endif %}

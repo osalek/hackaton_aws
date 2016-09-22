@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: install and configure mongodb server
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - squeeze
+    - wheezy
+  categories:
+  - database:nosql
+dependencies: []

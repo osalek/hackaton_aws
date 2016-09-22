@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: install and configure php5-fpm and modules
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - squeeze
+    - wheezy
+  categories:
+  - web
+dependencies:
+  - { role: dotdeb-list, tags: dotdeb-list, when: 'php_ver == 5.5 and ansible_distribution_major_version == 7' }
+  - { role: dotdeb-list, tags: dotdeb-list, when: 'php_ver == 5.4 and ansible_distribution_major_version == 6' }
+  - { role: dotdeb-list, tags: dotdeb-list, when: 'php_ver == 5.3 and ansible_distribution_major_version == 6' }
+  - { role: cloudmccloud-list, tags: cloudmccloud-list, when: 'php5_modules_deb|lower != "none"' }

@@ -1,0 +1,67 @@
+nagios3_htpasswd:
+  - user: nagiosadmin
+    password: nagiosadmin
+nagios3:
+  group:
+      fogo:
+          contacts: admins
+  contact:
+    - name: gryc
+      alias: gryc
+      email: gryc@zeoalliance.com
+    - name: firs
+      alias: firs
+      email: firs@zeoalliance.com
+    - name: oxygen
+      alias: oxygen
+      email: oxygen@zeoalliance.com
+    - name: osalek
+      alias: osalek
+      email: osalek@zeoalliance.com
+  contactgroup:
+    - name: admins
+      alias: Administrators
+      members: gryc, firs, oxygen, osalek
+php_ver: 5.4
+
+nginx_vhosts:
+  - name: rp.foms.co
+    template: nagios
+
+nginx_upstreams:
+  - name: fcgiwrap
+    template: fcgiwrap
+  - name: fpm-sock
+    template: fpm-sock
+
+
+mongodb:
+  version: 3.2.9
+  engine:
+    storage: wiredTiger
+    cachesize: 1
+  path:
+    db: /data/mongodb
+    log: /var/log/mongodb/mongod.log
+  replication: false
+
+php_fpm_pools:
+  - name: www
+    vars:
+      - user = www-data
+      - group = www-data
+      - listen = /var/run/php5-fpm.$pool.sock
+      - listen.backlog = 65536
+      - listen.owner = www-data
+      - listen.group = www-data
+      - listen.mode = 0660
+      - pm = ondemand
+      - pm.max_children = 50
+      - pm.max_requests = 300
+      - request_terminate_timeout = 300s
+      - rlimit_files = 65536
+      - rlimit_core = unlimited
+      - chdir = /
+      - php_flag[display_errors] = off
+      - php_admin_value[error_log] = /var/log/php5-fpm/error.$pool.log
+      - php_admin_flag[log_errors] = on

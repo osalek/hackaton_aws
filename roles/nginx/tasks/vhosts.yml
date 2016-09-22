@@ -1,0 +1,41 @@
+---
+- name: add virtual host configuration file(s)
+  template: >
+    src=vhosts/{{ item.template }}.j2
+    dest=/etc/nginx/vhosts/{{ item.name }}
+  with_items: '{{ nginx_vhosts }}'
+  when: item.state|default('present') == 'present'
+  notify:
+    - reload nginx
+
+- name: check unmanaged virtual host configuration file(s)
+  shell: ls -1p /etc/nginx/vhosts | grep -v /
+  register: unmanaged_files
+  changed_when: false
+
+- name: whitelist managed virtual host configuration file(s)
+  set_fact: managed_files="{{ nginx_vhosts|map(attribute='name')|list }}"
+
+- name: delete unmanaged virtual host configuration file(s)
+  file: >
+    path=/etc/nginx/vhosts/{{ item }}
+    state=absent
+  with_items: '{{ unmanaged_files.stdout_lines }}'
+  when: item not in managed_files
+  notify:
+    - reload nginx
+
+- name: delete virtual host configuration file(s)
+  file: >
+    path=/etc/nginx/vhosts/{{ item.name }}
+    state=absent
+  with_items: '{{ nginx_vhosts }}'
+  when: item.state|default('present') == 'absent'
+  notify:
+    - reload nginx
+
+- name: check syntax of nginx configuration file
+  shell: nginx -t
+  register: result
+  changed_when: "result.rc != 0"
+  failed_when: ('ERROR' in result.stdout)

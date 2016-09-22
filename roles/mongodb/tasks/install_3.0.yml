@@ -1,0 +1,37 @@
+---
+- name: add mongodb-10gen repository
+  template: >
+    src=mongodb.list.j2
+    dest=/etc/apt/sources.list.d/mongodb.list
+  
+- name: add mongodb-10gen repository key
+  apt_key: >
+    id=7F0CEB10
+    url=http://docs.mongodb.org/10gen-gpg-key.asc
+
+- name: disable transparent hugepages
+  copy: >
+    src=disable_thp
+    dest=/etc/init.d/disable-transparent-hugepages
+    mode=0755
+
+- name: disable transparent hugepages
+  service: >
+    name=disable-transparent-hugepages
+    state=started
+    enabled=yes
+
+- name: install mongodb server
+  apt: >
+    name={{ item }}
+    state=present
+    force=yes
+    update_cache=yes
+  with_items:
+    - mongodb-org-server={{ mongodb.version }}
+    - mongodb-org-shell={{ mongodb.version }}
+    - mongodb-org-tools={{ mongodb.version }}
+
+- name: install numactl
+  apt: >
+    name=numactl

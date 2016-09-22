@@ -1,0 +1,19 @@
+{% if ansible_distribution_major_version == 6 %}
+{% set release = "squeeze" %}
+{% elif ansible_distribution_major_version == 7 %}
+{% set release = "wheezy" %}
+{% elif ansible_distribution_major_version == 8 %}
+{% set release = "jessie" %}
+{% endif %}
+deb http://packages.dotdeb.org {{ release }} all
+deb-src http://packages.dotdeb.org {{ release }} all
+{% if php_ver == 5.4 and ansible_distribution_major_version == 6 %}
+
+deb http://packages.dotdeb.org {{ release }}-php54 all
+deb-src http://packages.dotdeb.org {{ release }}-php54 all
+{% endif %}
+{% if php_ver == 5.5 and ansible_distribution_major_version == 7 %}
+
+deb http://packages.dotdeb.org {{ release }}-php55 all
+deb-src http://packages.dotdeb.org {{ release }}-php55 all
+{% endif %}

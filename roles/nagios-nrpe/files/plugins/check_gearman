@@ -1,0 +1,16 @@
+#!/bin/bash
+
+arg1=$1
+
+CHECK=`(echo version) | netcat $arg1 4730 -w 1 | grep OK`
+
+if [[ -n $CHECK ]]; then
+        SC="Gearman Server is UP"
+        EX=0
+    else
+        SC="Gearman Server is DOWN"
+        EX=2
+fi
+
+echo "$SC"
+exit $EX

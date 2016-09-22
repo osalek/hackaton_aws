@@ -1,0 +1,53 @@
+---
+- name: update pear.php.net channel
+  command: >
+    pear channel-update pear.php.net
+  register: pear_update_result
+  changed_when: "'is up to date' not in pear_update_result.stdout"
+
+- name: discover required PEAR channels
+  command: >
+    pear channel-discover {{ item.pear }}
+  register: channel_result
+  changed_when: "'already initialized' not in channel_result.stdout"
+  failed_when: "channel_result.stderr"
+  with_items: "{{ php_modules_pear }}"
+
+- name: install twig module
+  command: >
+    pear install twig/CTwig
+  register: pear_result
+  changed_when: "'already installed' not in pear_result.stdout"
+  failed_when: "pear_result.stderr"
+  with_items: "{{ php_modules_pear }}"
+  when: item.name == 'twig'
+
+- name: create modules configuration files
+  copy: >
+    content='extension={{ item.name }}.so{{ '\n' }}'
+    dest=/etc/php5/mods-available/{{ item.name }}.ini
+  with_items: "{{ php_modules_pear }}"
+  when: "php_ver >= 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: create modules configuration files
+  copy: >
+    content='extension={{ item.name }}.so{{ '\n' }}'
+    dest=/etc/php5/conf.d/{{ item.name }}.ini
+  with_items: "{{ php_modules_pear }}"
+  when: "php_ver < 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: create symlinks for php modules configuration files
+  file: >
+    src=/etc/php5/mods-available/{{ item[0].name }}.ini
+    dest=/etc/php5/{{ item[1] }}/conf.d/{{ item[0].prefix|default(20) }}-{{ item[0].name }}.ini
+    state=link
+  with_nested:
+    - '{{ php_modules_pear }}'
+    - [ 'cli', 'fpm' ]
+  when: "php_ver >= 5.4"
+  notify:
+    - reload php5-fpm

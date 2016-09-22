@@ -1,0 +1,9 @@
+---
+- name: copy nagios3 contacts config file
+  template: >
+    src={{ item.src }}.j2
+    dest={{ item.dest }}
+  with_items:
+    - { src: contacts.cfg, dest: /etc/nagios3/conf.d/contacts.cfg }
+  notify:
+    - reload nagios3

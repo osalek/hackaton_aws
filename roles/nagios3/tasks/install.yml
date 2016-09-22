@@ -1,0 +1,12 @@
+---
+- name: install nagios3
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=600
+  with_items:
+    - nagios3
+    - nagios-nrpe-plugin
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+    RUNLEVEL: 1
+  notify:
+    - start nagios3
+  

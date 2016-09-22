@@ -1,0 +1,739 @@
+# check that web services are running
+define service {
+        hostgroup_name                  http_{{ item.key }}
+        service_description             HTTP
+ 	check_command                   check_http
+        use                             {{ item.key }}-service
+	notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  http_8080_{{ item.key }}
+        service_description             HTTP 8080
+        check_command                   check_http_8080
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  https_{{ item.key }}
+        service_description             HTTPS
+        check_command                   check_https
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that ssh services are running
+define service {
+        hostgroup_name                  ssh_{{ item.key }}
+        service_description             SSH
+	check_command                   check_ssh
+        use                             {{ item.key }}-service
+	notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that icmp services are up
+define service {
+        hostgroup_name                  ping_{{ item.key }}
+        service_description             PING
+        check_command                   check_ping!300.0,20%!600.0,60%
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that dns services are running
+define service {
+        hostgroup_name                  dns_{{ item.key }}
+        service_description             DNS
+        check_command                   check_dns
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that mdadm services are running
+define service {
+        hostgroup_name                  mdadm_{{ item.key }}
+        service_description             RAID
+        check_command                   check_nrpe_1arg!check_raid
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that hwraid services are running
+define service {
+        hostgroup_name                  hwraid_{{ item.key }}
+        service_description             RAID
+        check_command                   check_nrpe_1arg!check_hwraid
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check disk space
+define service {
+        hostgroup_name                  disk_{{ item.key }}
+        service_description             Disk Space
+        check_command                   check_nrpe_1arg!check_all_disks
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that mongodb services are running
+define service {
+        hostgroup_name                  mongodb_{{ item.key }}
+        service_description             Mongo Connect Check
+        check_command                   check_mongodb!connect!27017!2!4
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_{{ item.key }}
+        service_description             Mongo Free Connections
+        check_command                   check_mongodb!connections!27017!70!80
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_{{ item.key }}
+        service_description             Mongo Replication Lag
+        check_command                   check_mongodb!replication_lag!27017!15!30
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_{{ item.key }}
+        service_description             Mongo Lock Percentage
+        check_command                   check_mongodb!lock!27017!5!10
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_{{ item.key }}
+        service_description             MongoDB State
+        check_command                   check_mongodb!replset_state!27017!0!0
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_{{ item.key }}
+        service_description             Mongo Flush Average
+        check_command                   check_mongodb!flushing!27017!100!200
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_{{ item.key }}
+        service_description             Mongo Last Flush Time
+        check_command                   check_mongodb!last_flush_time!27017!200!400
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that mongodb nrpe services are running
+define service {
+        hostgroup_name                  mongodb_nrpe_{{ item.key }}
+        service_description             Mongo Connect Check
+        check_command                   check_nrpe_1arg!check_mongodb_connect
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_nrpe_{{ item.key }}
+        service_description             Mongo Free Connections
+        check_command                   check_nrpe_1arg!check_mongodb_connections
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_nrpe_{{ item.key }}
+        service_description             Mongo Replication Lag
+        check_command                   check_nrpe_1arg!check_mongodb_replication_lag
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_nrpe_{{ item.key }}
+        service_description             Mongo Lock Percentage
+        check_command                   check_nrpe_1arg!check_mongodb_lock
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_nrpe_{{ item.key }}
+        service_description             MongoDB State
+        check_command                   check_nrpe_1arg!check_mongodb_replset_state
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_nrpe_{{ item.key }}
+        service_description             Mongo Flush Average
+        check_command                   check_nrpe_1arg!check_mongodb_flushing
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb_nrpe_{{ item.key }}
+        service_description             Mongo Last Flush Time
+        check_command                   check_nrpe_1arg!check_mongodb_last_flush_time
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that mongodb 3.0 services are running
+define service {
+        hostgroup_name                  mongodb3_{{ item.key }}
+        service_description             Mongo Connect Check
+        check_command                   check_mongodb3!connect!27017!2!4
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb3_{{ item.key }}
+        service_description             Mongo Free Connections
+        check_command                   check_mongodb3!connections!27017!70!80
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb3_{{ item.key }}
+        service_description             Mongo Replication Lag
+        check_command                   check_mongodb3!replication_lag!27017!15!30
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb3_{{ item.key }}
+        service_description             MongoDB State
+        check_command                   check_mongodb3!replset_state!27017!0!0
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that mongodb 3.0 nrpe services are running
+define service {
+        hostgroup_name                  mongodb3_nrpe_{{ item.key }}
+        service_description             Mongo Connect Check
+        check_command                   check_nrpe_1arg!check_mongodb3_connect
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb3_nrpe_{{ item.key }}
+        service_description             Mongo Free Connections
+        check_command                   check_nrpe_1arg!check_mongodb3_connections
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb3_nrpe_{{ item.key }}
+        service_description             Mongo Replication Lag
+        check_command                   check_nrpe_1arg!check_mongodb3_replication_lag
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongodb3_nrpe_{{ item.key }}
+        service_description             MongoDB State
+        check_command                   check_nrpe_1arg!check_mongodb3_replset_state
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that mongos services are running
+define service {
+        hostgroup_name                  mongos_{{ item.key }}
+        service_description             Mongos
+        check_command                   check_nrpe_1arg!check_mongos
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongos_multi_{{ item.key }}
+        service_description             Mongos Account
+        check_command                   check_nrpe_1arg!check_mongos_27017
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mongos_multi_{{ item.key }}
+        service_description             Mongos Antitheft
+        check_command                   check_nrpe_1arg!check_mongos_27018
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that mongos status services are running
+define service {
+        hostgroup_name                  mongos_status_{{ item.key }}
+        service_description             Mongos Status
+        check_command                   check_nrpe_1arg!check_mongos_status
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that arbiter services are running
+define service {
+        hostgroup_name                  arbiter_{{ item.key }}
+        service_description             Arbiter
+        check_command                   check_nrpe_1arg!check_arbiter
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that redis services are running
+define service {
+        hostgroup_name                  redis_{{ item.key }}
+        service_description             Redis Server
+        check_command                   check_nrpe_1arg!check_redis
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that gearman services are running
+define service {
+        hostgroup_name                  gearman_{{ item.key }}
+        service_description             Gearman Server
+	check_command                   check_nrpe_1arg!check_gearman
+        use                             {{ item.key }}-service
+	notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check that percona plugins services are running
+define service {
+        hostgroup_name                  unixmem_{{ item.key }}
+        service_description             Unix Memory      
+        check_command                   check_nrpe_1arg!check_unix_memory
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql_{{ item.key }}
+        service_description             Mysql Threads Connected
+        check_command                   check_nrpe_1arg!check_threads_con
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql_{{ item.key }}
+        service_description             Mysql Created Tmp Disk Tables
+        check_command                   check_nrpe_1arg!check_created_tmp
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql_{{ item.key }}
+        service_description             Mysql Threads Running
+        check_command                   check_nrpe_1arg!check_threads_run
+        use                             {{ item.key }}-service   
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql_{{ item.key }}
+        service_description             Mysql Processlist
+        check_command                   check_nrpe_1arg!check_processlist
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check mysql replication master-master
+define service {
+        hostgroup_name                  mysql-master_{{ item.key }}
+        service_description             Mysql Replication [Master-Master]
+        check_command                   check_nrpe_1arg!check_repl_mm
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-master_{{ item.key }}
+        service_description             Mysql Replication Delay [Master-Master]
+        check_command                   check_nrpe_1arg!check_repl_delay_mm
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check mysql replication master-slave
+define service {
+        hostgroup_name                  mysql-slave_{{ item.key }}
+        service_description             Mysql Replication [Master-Slave]
+        check_command                   check_nrpe_1arg!check_repl_ms
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave_{{ item.key }}
+        service_description             Mysql Replication Delay [Master-Slave]
+        check_command                   check_nrpe_1arg!check_repl_delay_ms
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+# check mysql replication master-slave-multi
+define service {
+	hostgroup_name                  mysql-slave-multi1_{{ item.key }}
+        service_description     	Mysql Replication
+        check_command           	check_repl1
+	use				{{ item.key }}-service
+	notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+	hostgroup_name                  mysql-slave-multi1_{{ item.key }}
+        service_description     	Mysql Replication Delay
+        check_command           	check_repl1_delay
+	use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi2_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl2
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi2_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl2_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi3_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl3
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi3_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl3_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi4_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl4
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi4_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl4_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi5_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl5
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi5_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl5_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi6_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl6
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi6_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl6_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi7_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl7
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi7_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl7_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi8_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl8
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi8_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl8_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi9_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl9
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi9_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl9_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi10_{{ item.key }}
+        service_description             Mysql Replication
+        check_command                   check_repl10
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mysql-slave-multi10_{{ item.key }}
+        service_description             Mysql Replication Delay
+        check_command                   check_repl10_delay
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  ofd_{{ item.key }}
+        service_description             File Descriptors
+        check_command                   check_nrpe_1arg!check_ofd
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  nfs_{{ item.key }}
+        service_description             NFS
+        check_command                   check_nrpe_1arg!check_nfs_mount
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  haproxy_{{ item.key }}
+        service_description             Haproxy
+        check_command                   check_haproxy
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  haproxy-https_{{ item.key }}
+        service_description             Haproxy Https
+        check_command                   check_haproxy_https
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  haproxy-nrpe_{{ item.key }}
+        service_description             Haproxy
+        check_command                   check_nrpe_1arg!check_haproxy
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  haproxy-tcp_{{ item.key }}
+        service_description             Haproxy
+        check_command                   check_tcp!80
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  haproxy-https-tcp_{{ item.key }}
+        service_description             Haproxy Https
+        check_command                   check_tcp!443
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  smtp_{{ item.key }}
+        service_description             SMTP   
+        check_command                   check_smtp
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  smtp_nrpe_{{ item.key }}
+        service_description             SMTP
+        check_command                   check_nrpe_1arg!check_smtp
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  smtp_haproxy_{{ item.key }}
+        service_description             SMTP HAPROXY
+        check_command                   check_nrpe_1arg!check_smtp_haproxy
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-cleaner_{{ item.key }}
+        service_description             Cleaner Instances
+        check_command                   check_mb_cleaner
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-daemon_{{ item.key }}
+        service_description             Daemon Instances
+        check_command                   check_mb_daemon
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-doc_{{ item.key }}
+        service_description             Doc Instances
+        check_command                   check_mb_doc
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-patcher_{{ item.key }}
+        service_description             Patcher Instances
+        check_command                   check_mb_patcher
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-polling_{{ item.key }}
+        service_description             Polling Instances
+        check_command                   check_mb_polling
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-photo_{{ item.key }}
+        service_description             Photo Instances
+        check_command                   check_mb_photo
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-photomon_{{ item.key }}
+        service_description             Photomon Daemon
+        check_command                   check_nrpe_1arg!check_photomon
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-awsproxy_{{ item.key }}
+        service_description             Awsproxy Instances
+        check_command                   check_mb_awsproxy
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-gear_{{ item.key }}
+        service_description             Gear Instances
+        check_command                   check_mb_gear
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-transcoder_{{ item.key }}
+        service_description             Transcoder Instances
+        check_command                   check_mb_transcoder
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  mb-web_{{ item.key }}
+        service_description             Web Instances
+        check_command                   check_mb_web
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  websbee_{{ item.key }}
+        service_description             Websbee Server
+        check_command                   check_nrpe_1arg!check_websbee
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}
+
+define service {
+        hostgroup_name                  rabbitmq_{{ item.key }}
+        service_description             Rabbitmq Server
+        check_command                   check_nrpe_1arg!check_rabbitmq
+        use                             {{ item.key }}-service
+        notification_interval           0 ; set > 0 if you want to be renotified
+}

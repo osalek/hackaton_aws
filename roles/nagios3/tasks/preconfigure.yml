@@ -1,0 +1,19 @@
+---
+- name: check if servers directory exists
+  stat: path=/etc/nagios3/servers
+  register: check_dir
+
+- name: create servers directory
+  file: >
+    path=/etc/nagios3/servers
+    state=directory
+  when: check_dir.stat.exists == false
+
+- name: copy localhost config files
+  template: >
+    src=localhost.cfg.j2
+    dest=/etc/nagios3/servers/localhost-{{ item.key }}.cfg
+  with_dict: nagios3.group
+  notify:
+    - reload nagios3
+  when: check_dir.stat.exists == false

@@ -1,0 +1,16 @@
+---
+- name: create maps directory
+  file: >
+    path=/etc/nginx/maps
+    state=directory
+  with_items: '{{ nginx_maps }}'
+  when: nginx_maps|default(None) != None
+
+- name: copy maps
+  copy: >
+    src=maps/{{ item }}
+    dest=/etc/nginx/maps
+  with_items: '{{ nginx_maps }}'
+  when: nginx_maps|default(None) != None
+  notify:
+    - reload nginx

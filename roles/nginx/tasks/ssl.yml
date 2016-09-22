@@ -1,0 +1,57 @@
+---
+- name: create ssl directory
+  file: >
+    path=/etc/nginx/ssl
+    state=directory
+    mode=0700
+  with_items: '{{ nginx_vhosts }}'
+  when: item.ssl|default(None) != None or item.template == 'default_ssl'
+
+- name: copy ssl certificate
+  copy: >
+    src=ssl/{{ item.ssl }}.crt
+    dest=/etc/nginx/ssl
+    mode=0600
+  with_items: '{{ nginx_vhosts }}'
+  when: item.ssl|default(None) != None
+  notify:
+    - reload nginx
+
+- name: copy ssl private key
+  copy: >
+    src=ssl/{{ item.ssl }}.key
+    dest=/etc/nginx/ssl
+    mode=0600
+  with_items: '{{ nginx_vhosts }}'
+  when: item.ssl|default(None) != None
+  notify:
+    - reload nginx
+
+- name: copy dhparam key
+  copy: >
+    src=ssl/dhparam.pem
+    dest=/etc/nginx/ssl
+    mode=0600
+  with_items: '{{ nginx_vhosts }}'
+  when: item.template == 'default_ssl'
+  notify:
+    - reload nginx
+
+- name: check unmanaged ssl certificates
+  shell: ls -1 /etc/nginx/ssl|sed 's/....$//'|uniq -d
+  register: unmanaged_files
+  changed_when: false
+
+- name: whitelist managed ssl certificates
+  set_fact: managed_files="{{ nginx_vhosts|selectattr('ssl', 'defined')|map(attribute='ssl')|list|unique }}"
+
+- name: delete unmanaged ssl certificates
+  file: >
+    path=/etc/nginx/ssl/{{ item.0 }}{{ item.1 }}
+    state=absent
+  with_nested:
+    - '{{ unmanaged_files.stdout_lines }}'
+    - [ '.crt', '.key' ]
+  when: item.0 not in managed_files
+  notify:
+    - reload nginx

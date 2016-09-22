@@ -1,0 +1,13 @@
+---
+- name: restart mongos
+  service: >
+    name={{ item.name }}
+    state=restarted
+  ignore_errors: yes
+  with_items: '{{ mongos }}'
+
+- name: start mongos
+  service: >
+    name={{ item.name }}
+    state=started
+  with_items: '{{ mongos }}'

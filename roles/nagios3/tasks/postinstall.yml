@@ -1,0 +1,3 @@
+---
+- name: remove apache2 autostart
+  shell: update-rc.d -f apache2 remove

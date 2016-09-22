@@ -1,0 +1,25 @@
+---
+- name: create the file to initialize the mongodb replica set
+  template: >
+    src=replset_init.j2
+    dest=/tmp/replset_init.js
+
+- name: pause for a while
+  pause: >
+    seconds=10
+  when: mongodb.replication
+
+- name: initialize the replication set
+  shell: >
+    /usr/bin/mongo --port "{{ mongodb.bind.port }}" /tmp/replset_init.js
+  when: mongodb.bind is defined
+
+- name: initialize the replication set
+  shell: >
+    /usr/bin/mongo --port 27017 /tmp/replset_init.js
+  when: mongodb.bind is not defined
+
+- name: remove the initialize file
+  file: >
+    path=/tmp/replset_init.js
+    state=absent

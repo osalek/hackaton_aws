@@ -1,0 +1,44 @@
+---
+- name: add mongodb-10gen repository
+  copy: >
+    src=mongodb.list
+    dest=/etc/apt/sources.list.d/mongodb.list
+  
+- name: add mongodb-10gen repository key
+  apt_key: >
+    id=7F0CEB10
+    url=http://docs.mongodb.org/10gen-gpg-key.asc
+
+- name: check if mongodb user exists
+  shell: >
+    /usr/bin/getent passwd mongodb | /usr/bin/wc -l | tr -d ' '
+  register: check_user
+  changed_when: "'0' in check_user.stdout"
+
+- name: create mongodb user
+  shell: "{{ item }}"
+  with_items:
+    - adduser --system --no-create-home mongodb
+    - addgroup --system mongodb
+    - adduser mongodb mongodb
+  when: "'0' in check_user.stdout"  
+
+- name: create directory for mongos logs
+  file: >
+    path=/var/log/mongodb
+    state=directory
+    owner=mongodb
+    group=mongodb
+
+- name: install mongos
+  apt: >
+    name={{ item }}
+    state=present
+    force=yes
+    update_cache=yes
+  with_items:
+    - mongodb-org-mongos={{ mongodb.version }}
+    - mongodb-org-shell={{ mongodb.version }}
+    - mongodb-org-tools={{ mongodb.version }}
+  notify:
+    - restart mongos

@@ -1,0 +1,21 @@
+---
+- name: install dependencies for rabbitmq plugin
+  apt: >
+    name={{ item }}
+  with_items:
+     - cpanminus
+     - libmath-calc-units-perl
+     - libconfig-tiny-perl
+     - libjson-perl
+
+- name: install dependencies for rabbitmq plugin
+  cpanm: >
+    name=Monitoring::Plugin
+
+- name: copy nagios plugins
+  copy: >
+    src=plugins/{{ item }}
+    dest=/usr/lib/nagios/plugins
+    mode=0755
+  with_items:
+    - check_rabbitmq_server

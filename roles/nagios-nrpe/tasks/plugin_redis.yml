@@ -1,0 +1,14 @@
+---
+- name: install dependencies for redis plugin
+  apt: >
+    name={{ item }}
+  with_items:
+    - libredis-perl
+
+- name: copy nagios plugins
+  copy: >
+    src=plugins/{{ item }}
+    dest=/usr/lib/nagios/plugins
+    mode=0755
+  with_items:
+    - check_redis.pl

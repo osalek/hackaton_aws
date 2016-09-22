@@ -1,0 +1,26 @@
+---
+- name: check if dbpath exists
+  stat: >
+    path={{ mongodb.path.db }}
+  register: check_dbpath
+
+- name: create dbpath
+  file: >
+    path={{ mongodb.path.db }}
+    state=directory
+    owner=mongodb
+    group=mongodb               
+  when: check_dbpath.stat.exists == false
+
+- name: copy mongod.conf
+  template: >
+    src=mongodb.conf.j2
+    dest=/etc/mongod.conf
+  notify:
+    - restart mongod
+
+- name: restart mongod
+  service: >
+    name=mongod
+    state=restarted
+  when: mongodb.replication

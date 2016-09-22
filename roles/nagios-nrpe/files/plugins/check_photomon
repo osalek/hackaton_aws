@@ -1,0 +1,14 @@
+#!/bin/bash
+
+CHECK=`ps ax|grep zeophotomon|grep -v "grep"`
+
+if [[ $CHECK == 0 ]]; then
+        SC="Photomon Daemon is DOWN"
+        EX=2
+    else
+        SC="Photomon Daemon is UP"
+        EX=0
+fi
+
+echo "$SC"
+exit $EX

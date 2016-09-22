@@ -1,0 +1,80 @@
+---
+- name: change nagios3 config files
+  lineinfile: >
+    dest={{ item.dest }}
+    regexp={{ item.regexp }}
+    line={{ item.line }}
+    state=present
+  with_items:
+    - { dest: /etc/nagios3/cgi.cfg, regexp: "^url_html_path", line: "url_html_path=/" }
+    - { dest: /etc/nagios3/cgi.cfg, regexp: "^result_limit", line: "result_limit=0" }
+    - { dest: /etc/nagios3/nagios.cfg, regexp: "^(.*)cfg_dir=/etc/nagios3/servers(.*)$", line: "cfg_dir=/etc/nagios3/servers" } 
+    - { dest: /etc/nagios3/nagios.cfg, regexp: "^check_external_commands", line: "check_external_commands=1" }
+    - { dest: /etc/nagios3/nagios.cfg, regexp: "^allow_empty_hostgroup_assignment", line: "allow_empty_hostgroup_assignment=1" }
+  notify:
+    - reload nagios3
+
+- name: copy host config files
+  template: >
+    src=host.cfg.j2
+    dest=/etc/nagios3/conf.d/{{ item.key }}-host.cfg
+  with_dict: nagios3.group
+  notify:
+    - reload nagios3
+
+- name: copy service config files
+  template: >
+    src=service.cfg.j2
+    dest=/etc/nagios3/conf.d/{{ item.key }}-service.cfg
+  with_dict: nagios3.group
+  notify:
+    - reload nagios3
+
+- name: copy hostgroups config files
+  template: >
+    src=hostgroups.cfg.j2
+    dest=/etc/nagios3/conf.d/hostgroups_{{ item.key }}.cfg
+  with_dict: nagios3.group
+  notify:
+    - reload nagios3
+
+- name: copy services config files
+  template: >
+    src=services.cfg.j2
+    dest=/etc/nagios3/conf.d/services_{{ item.key }}.cfg
+  with_dict: nagios3.group
+  notify:
+    - reload nagios3
+
+- name: copy timeperiods config file
+  copy: >
+    src=timeperiods.cfg
+    dest=/etc/nagios3/conf.d
+  notify:
+    - reload nagios3
+
+- name: copy nagios3 config files
+  template: >
+    src={{ item }}.j2
+    dest=/etc/nagios3/{{ item }}
+  with_items:
+    - cgi.cfg
+    - commands.cfg
+  notify:
+    - reload nagios3
+
+- name: delete unused config files
+  file: >
+    path={{ item }}
+    state=absent
+  with_items:
+    - /etc/nagios3/conf.d/contacts_nagios2.cfg
+    - /etc/nagios3/conf.d/extinfo_nagios2.cfg
+    - /etc/nagios3/conf.d/generic-host_nagios2.cfg
+    - /etc/nagios3/conf.d/generic-service_nagios2.cfg
+    - /etc/nagios3/conf.d/hostgroups_nagios2.cfg
+    - /etc/nagios3/conf.d/localhost_nagios2.cfg
+    - /etc/nagios3/conf.d/services_nagios2.cfg
+    - /etc/nagios3/conf.d/timeperiods_nagios2.cfg
+  notify:
+    - reload nagios3

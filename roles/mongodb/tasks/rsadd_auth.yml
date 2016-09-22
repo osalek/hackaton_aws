@@ -1,0 +1,24 @@
+---
+- name: create the file to add instances to the replica set
+  template: >
+    src=replset_add.j2
+    dest=/tmp/replset_add.js
+
+- name: add instances to the replica set
+  shell: >
+    /usr/bin/mongo --port "{{ mongodb.bind.port }}" -u root \
+    -p {{ lookup('file', playbook_dir + '/vars/secrets/mongodb/' + inventory_hostname + '/root') }} \
+    --authenticationDatabase admin /tmp/replset_add.js
+  when: mongodb.bind is defined
+
+- name: add instances to the replica set
+  shell: >
+    /usr/bin/mongo --port 27017 -u root \
+    -p {{ lookup('file', playbook_dir + '/vars/secrets/mongodb/' + inventory_hostname + '/root') }} \
+    --authenticationDatabase admin /tmp/replset_add.js
+  when: mongodb.bind is not defined
+
+- name: remove the initialize file
+  file: >
+    path=/tmp/replset_add.js
+    state=absent

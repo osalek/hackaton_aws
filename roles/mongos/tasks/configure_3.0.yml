@@ -1,0 +1,47 @@
+---
+- name: remove dist mongos configuration file
+  file: >
+    path=/etc/mongod.conf
+    state=absent
+
+- name: create configs directory
+  file: >
+    path=/etc/mongodb
+    state=directory
+
+- name: add mongos configuration file
+  template: >
+    src=mongos3.conf.j2
+    dest=/etc/mongodb/{{ item.name }}.conf
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None
+  notify:
+    - restart mongos
+
+- name: add mongos init.d script
+  template: >
+    src=mongos3.j2
+    dest=/etc/init.d/{{ item.name }}
+    mode=755
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None
+  notify:
+    - restart mongos
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+
+- name: set mongos autostart
+  service: >
+    name={{ item.name }}
+    enabled=yes
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None
+
+- name: start mongos
+  service: >
+    name={{ item.name }}
+    state=started
+  ignore_errors: yes
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None

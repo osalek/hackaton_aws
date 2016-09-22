@@ -1,0 +1,43 @@
+---
+- name: add pool configuration file(s)
+  template: >
+    src=pool.conf.j2
+    dest=/etc/php5/fpm/pool.d/{{ item.name }}.conf
+  with_items: "{{ php_fpm_pools }}"
+  when: item.state|default('present') == 'present'
+  notify:
+    - reload php5-fpm
+
+- name: check unmanaged file(s)
+  shell: >
+    ls -1p /etc/php5/fpm/pool.d | grep -v / | cut -d'.' -f1
+  register: unmanaged_files
+  changed_when: false
+
+- name: whitelist managed file(s)
+  set_fact: managed_files="{{ php_fpm_pools|map(attribute='name')|list }}"
+
+- name: delete unmanaged file(s)
+  file: >
+    path=/etc/php5/fpm/pool.d/{{ item }}.conf
+    state=absent
+  with_items: "{{ unmanaged_files.stdout_lines }}"
+  when: item not in managed_files
+  notify:
+    - reload php5-fpm
+
+- name: delete pool configuration file(s)
+  file: >
+    path=/etc/php5/fpm/pool.d/{{ item.name }}.conf
+    state=absent
+  with_items: "{{ php_fpm_pools }}"
+  when: item.state|default('present') == 'absent'
+  notify:
+    - reload php5-fpm
+
+- name: check syntax of php5-fpm configuration file(s)
+  shell: >
+    php5-fpm -t
+  register: result
+  changed_when: "result.rc != 0"
+  failed_when: ('ERROR' in result.stdout)

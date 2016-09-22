@@ -1,0 +1,44 @@
+---
+- name: check if dbpath exists
+  stat: path={{ mongodb.path.db }}
+  register: check_dbpath
+
+- name: create dbpath
+  file: >
+    path={{ mongodb.path.db }}
+    state=directory
+    owner=mongodb
+    group=mongodb
+  when: check_dbpath.stat.exists == false
+
+- name: copy mongod init.d script
+  copy: >
+    src=mongod
+    dest=/etc/init.d
+    mode=755
+
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+
+- name: remove dist mongod configuration file
+  file: >
+    path=/etc/mongod.conf
+    state=absent
+
+- name: create configs directory
+  file: >
+    path=/etc/mongodb
+    state=directory
+
+- name: copy mongod.conf
+  template: >
+    src=mongodb3.conf.j2
+    dest=/etc/mongodb/mongod.conf
+  notify:
+    - restart mongod
+
+- name: restart mongod
+  service: >
+    name=mongod
+    state=restarted
+  when: mongodb.replication

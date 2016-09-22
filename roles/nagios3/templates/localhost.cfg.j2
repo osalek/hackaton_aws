@@ -1,0 +1,16 @@
+define host {
+        use                     {{ item.key }}-host            ; Name of host template to use
+        host_name               localhost-{{ item.key }}
+        alias                   localhost-{{ item.key }}
+        address                 127.0.0.1
+        hostgroups              ssh_{{ item.key }}
+}
+
+define hostextinfo {
+        host_name               localhost-{{ item.key }}
+        notes                   Debian GNU/Linux servers
+        icon_image              base/debian.png
+        icon_image_alt          Debian GNU/Linux
+        vrml_image              debian.png
+        statusmap_image         base/debian.gd2
+}

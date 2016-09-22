@@ -1,0 +1,107 @@
+---
+- name: install pecl modules dependencies
+  apt: >
+    name={{ item.dependencies }}
+  with_items: "{{ php_modules_pecl }}"
+  when: php_modules_pecl|lower != 'none' and
+        (item.dependencies is defined and item.dependencies)
+
+- name: install pecl modules
+  command: >
+    pecl install {{ item.name }}
+  with_items: "{{ php_modules_pecl }}"
+  register: pecl_result
+  changed_when: "'already installed' not in pecl_result.stdout"
+  failed_when: "pecl_result.stderr or ('ERROR' in pecl_result.stdout)"
+  when: php_modules_pecl|lower != 'none' and
+        (item.name != 'mongo' and item.name != 'libevent')
+
+- name: install pecl mongo module
+  shell: >
+    echo "no" | pecl install -f {{ item.name }}-{{ item.version }}
+  with_items: "{{ php_modules_pecl }}"
+  when: php_modules_pecl|lower != 'none' and
+        (item.name == 'mongo' and item.name != 'libevent')
+
+- name: install pecl libevent module
+  shell: >
+    echo "no" | pecl install -f {{ item.url }}
+  with_items: "{{ php_modules_pecl }}"
+  when: php_modules_pecl|lower != 'none' and item.name == 'libevent'
+
+- name: git clone source of modules
+  git: >
+    repo={{ item.repo }}
+    dest=/usr/src/{{ item.dest }}
+  with_items: "{{ php_modules_pecl }}"
+  when: php_modules_pecl|lower != 'none' and
+        (item.name != 'mongo' and item.name != 'libevent')
+
+- name: build and install source modules
+  shell: >
+    cd /usr/src/{{ item.dest }} && phpize ; \
+    cd /usr/src/{{ item.dest }} && ./configure {{ item.configure|default(None) }} ; \
+    cd /usr/src/{{ item.dest }} && make && make install
+  with_items: "{{ php_modules_pecl }}"
+  when: php_modules_pecl|lower != 'none' and
+        (item.name != 'mongo' and item.name != 'libevent')
+
+- name: create modules configuration files
+  copy: >
+    content='extension={{ item.name }}.so{{ '\n' }}'
+    dest=/etc/php5/mods-available/{{ item.name }}.ini
+  with_items: "{{ php_modules_pecl }}"
+  when: "php_modules_pecl|lower != 'none' and php_ver >= 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: create modules configuration files
+  copy: >
+    content='extension={{ item.name }}.so{{ '\n' }}'
+    dest=/etc/php5/conf.d/{{ item.name }}.ini
+  with_items: "{{ php_modules_pecl }}"
+  when: "php_modules_pecl|lower != 'none' and php_ver < 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: create symlinks for php modules configuration files
+  file: >
+    src=/etc/php5/mods-available/{{ item[0].name }}.ini
+    dest=/etc/php5/{{ item[1] }}/conf.d/{{ item[0].prefix|default(20) }}-{{ item[0].name }}.ini
+    state=link
+  with_nested:
+    - '{{ php_modules_pecl }}'
+    - [ 'cli', 'fpm' ]
+  when: "php_modules_pecl|lower != 'none' and php_ver >= 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: create redis module configuration file
+  copy: >
+    content='extension=redis.so{{ '\n' }}'
+    dest=/etc/php5/mods-available/redis.ini
+  with_items: "{{ php_modules_pecl }}"
+  when: "php_modules_pecl|lower != 'none' and item.name == 'igbinary' and php_ver >= 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: create redis module configuration file
+  copy: >
+    content='extension=redis.so{{ '\n' }}'
+    dest=/etc/php5/conf.d/redis.ini
+  with_items: "{{ php_modules_pecl }}"
+  when: "php_modules_pecl|lower != 'none' and item.name == 'igbinary' and php_ver < 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: create symlink for redis module configuration file
+  file: >
+    src=/etc/php5/mods-available/redis.ini
+    dest=/etc/php5/{{ item[1] }}/conf.d/20-redis.ini
+    state=link
+  with_nested:
+    - '{{ php_modules_pecl }}'
+    - [ 'cli', 'fpm' ]
+  when: "php_modules_pecl|lower != 'none' and item[0].name == 'igbinary' and php_ver >= 5.4"
+  notify:
+    - reload php5-fpm

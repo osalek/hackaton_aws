@@ -1,0 +1,19 @@
+map $status $log_200 {
+    ~^[2]   1;
+    default 0;
+}
+
+map $status $log_300 {
+    ~^[3]   1;
+    default 0;
+}
+
+map $status $log_400 {
+    ~^[4]   1;
+    default 0;
+}
+
+map $status $log_500 {
+    ~^[5]   1;
+    default 0;
+}

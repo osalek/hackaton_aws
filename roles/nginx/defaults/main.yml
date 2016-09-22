@@ -1,0 +1,31 @@
+---
+nginx_branch: stable
+nginx_user: www-data
+nginx_worker_processes: auto
+nginx_worker_priority: -5
+nginx_timer_resolution: 100ms
+nginx_worker_rlimit_nofile: 20512
+nginx_max_clients: 1024
+nginx_default_port: 80
+
+nginx_fastcgi_params:
+  template: default
+
+nginx_http_params:
+  - server_tokens off
+  - sendfile on
+  - tcp_nopush on
+  - keepalive_timeout 65
+  - tcp_nodelay on
+  - client_max_body_size 50m
+  - gzip off
+
+nginx_stub_status: 'on'
+nginx_stub_status_ip:
+  - { perm: allow, ip: 127.0.0.1 }
+  - { perm: allow, ip: 52.200.147.193 }
+  - { perm: allow, ip: 67.205.74.104 }
+  - { perm: allow, ip: 72.251.246.230 }
+
+nginx_vhosts: []
+nginx_upstreams: []

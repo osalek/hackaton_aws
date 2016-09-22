@@ -1,0 +1,18 @@
+---
+- name: activate mongodb logrotate
+  copy: >
+    src=mongodb
+    dest=/etc/logrotate.d/mongodb
+  when: mongodb.rsyslog is not defined
+
+- name: activate mongodb logrotate
+  copy: >
+    src=mongodb
+    dest=/etc/logrotate.d/mongodb
+  when: mongodb.rsyslog is defined and not mongodb.rsyslog
+
+- name: activate mongodb logrotate
+  copy: >
+    src=mongodb_rsyslog
+    dest=/etc/logrotate.d/mongodb
+  when: mongodb.rsyslog is defined and mongodb.rsyslog

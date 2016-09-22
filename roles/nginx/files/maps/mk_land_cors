@@ -1,0 +1,17 @@
+map $http_origin $cors_header {
+    default "";
+    "~^https?://mackeeperapp\.mackeeper\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://[^/]+\.mackeeper\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://mackeeper\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://[^/]+\.mackeeper\.co(:[0-9]+)?$" "$http_origin";
+    "~^https?://mackeeper\.co(:[0-9]+)?$" "$http_origin";
+    "~^https?://fixmymacos\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://cleaningformac\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://maccleanersecurity\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://trustedmaccleaner\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://fromslowmactofastmac\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://whymacslow\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://securemacfix\.com(:[0-9]+)?$" "$http_origin";
+    "~^https?://macprotect\.co(:[0-9]+)?$" "$http_origin";
+    "~^https?://browsesafemac\.com(:[0-9]+)?$" "$http_origin";
+}

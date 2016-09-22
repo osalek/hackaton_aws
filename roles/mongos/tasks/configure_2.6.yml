@@ -1,0 +1,34 @@
+---
+- name: add mongos configuration file
+  template: >
+    src=mongos.conf.j2
+    dest=/etc/{{ item.name }}.conf
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None
+  notify:
+    - restart mongos
+
+- name: add mongos init.d script
+  template: >
+    src=mongos.j2
+    dest=/etc/init.d/{{ item.name }}
+    mode=755
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None
+  notify:
+    - restart mongos
+
+- name: set mongos autostart
+  service: >
+    name={{ item.name }}
+    enabled=yes
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None
+
+- name: start mongos
+  service: >
+    name={{ item.name }}
+    state=started
+  ignore_errors: yes
+  with_items: '{{ mongos }}'
+  when: mongos|default(None) != None

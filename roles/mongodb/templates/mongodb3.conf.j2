@@ -1,0 +1,43 @@
+storage:
+   dbPath: {{ mongodb.path.db }}
+   directoryPerDB: true
+   journal:
+      enabled: true
+{% if mongodb.engine is defined %}
+   engine: {{ mongodb.engine.storage }}
+   wiredTiger:
+      engineConfig:
+         cacheSizeGB: {{ mongodb.engine.cachesize }}
+{% endif %}
+systemLog:
+   destination: file
+   path: {{ mongodb.path.log }}
+   logAppend: true
+net:
+{% if mongodb.bind is defined %}
+   bindIp: {{ mongodb.bind.ip }}
+{% endif %}
+{% if mongodb.bind is defined %}
+   port: {{ mongodb.bind.port }}
+{% else %}
+   port: 27017
+{% endif %}
+   http:
+      enabled: false
+      JSONPEnabled: false
+      RESTInterfaceEnabled: false
+{% if mongodb.auth is defined %}
+   ssl:
+      mode: preferSSL
+      PEMKeyFile: /etc/mongodb/ssl/{{ inventory_hostname }}.pem
+      CAFile: /etc/mongodb/ssl/ca.crt
+      clusterFile: /etc/mongodb/ssl/{{ inventory_hostname }}.pem
+security:
+   clusterAuthMode: {{ mongodb.auth.type }}
+{% endif %}
+{% if mongodb.replication %}
+replication:
+   replSetName: {{ mongodb.replset.name }}
+{% endif %}
+sharding:
+   clusterRole: shardsvr

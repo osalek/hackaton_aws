@@ -1,0 +1,14 @@
+---
+- name: restart mongodb
+  service: >
+    name=mongodb
+    state=restarted
+
+- name: restart mongod
+  service: >
+    name=mongod
+    state=restarted
+
+- name: apply sysctl
+  shell: >
+    sysctl -p /etc/sysctl.d/mongodb.conf

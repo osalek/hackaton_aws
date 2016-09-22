@@ -1,0 +1,8 @@
+{% if ansible_distribution_major_version == '6' %}
+{% set release = "squeeze" %}
+{% elif ansible_distribution_major_version == '7' %}
+{% set release = "wheezy" %}
+{% elif ansible_distribution_major_version == '8' %}
+{% set release = "jessie" %}
+{% endif %}
+deb http://debian.cloudmccloud.com/ {{ release }} main

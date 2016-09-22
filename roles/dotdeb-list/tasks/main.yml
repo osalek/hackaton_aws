@@ -1,0 +1,14 @@
+---
+- name: add dotdeb repository
+  template: >
+    src=dotdeb.list.j2
+    dest=/etc/apt/sources.list.d/dotdeb.list
+  
+- name: add dotdeb repository key
+  apt_key: >
+    url=http://www.dotdeb.org/dotdeb.gpg
+    state=present
+
+- name: update cache
+  apt: >
+    update_cache=yes

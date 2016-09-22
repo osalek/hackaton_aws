@@ -1,0 +1,69 @@
+---
+- name: create log directory
+  file: >
+    path=/var/log/php5-fpm
+    state=directory
+
+- name: copy php configuration files
+  template: >
+    src=config.ini.j2
+    dest=/etc/php5/mods-available/{{ item.name }}.ini
+  with_items: "{{ php_config }}"
+  when: "php_config|lower != 'none' and php_ver >= 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: copy php configuration files
+  template: >
+    src=config.ini.j2
+    dest=/etc/php5/conf.d/{{ item.name }}.ini
+  with_items: "{{ php_config }}"
+  when: "php_config|lower != 'none' and php_ver < 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: make symlinks for php configuration files
+  file: >
+    src=/etc/php5/mods-available/{{ item[0].name }}.ini
+    dest=/etc/php5/{{ item[1] }}/conf.d/{{ item[0].prefix|default(30) }}-{{ item[0].name }}.ini
+    state=link
+  with_nested:
+    - php_config
+    - [ 'cli', 'fpm' ]
+  when: "php_config|lower != 'none' and php_ver >= 5.4"
+  notify:
+    - reload php5-fpm
+
+- name: copy global configuration file
+  template: >
+    src=php-fpm.conf.j2
+    dest=/etc/php5/fpm/php-fpm.conf
+  with_items: "{{ php_fpm_conf }}"
+  when: php_fpm_conf|lower != 'none'
+  notify:
+    - reload php5-fpm
+
+- name: copy logrotate
+  copy: >
+    src=php5-fpm-5-3
+    dest=/etc/logrotate.d/php5-fpm
+  when: 'php_ver == 5.3'
+
+- name: copy logrotate
+  copy: >
+    src=php5-fpm-5-4
+    dest=/etc/logrotate.d/php5-fpm
+  when: 'php_ver == 5.4'
+
+- name: copy logrotate
+  copy: >
+    src=php5-fpm-5-5
+    dest=/etc/logrotate.d/php5-fpm
+  when: 'php_ver == 5.5'
+
+- name: check syntax of php5-fpm configuration files
+  shell: >
+    php5-fpm -t
+  register: result
+  changed_when: "result.rc != 0"
+  failed_when: ('ERROR' in result.stdout)

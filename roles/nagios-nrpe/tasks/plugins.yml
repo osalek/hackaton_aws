@@ -1,0 +1,12 @@
+---
+- name: copy nagios plugins
+  copy: >
+    src=plugins/{{ item }}
+    dest=/usr/lib/nagios/plugins
+    mode=0755
+  with_items:
+    - check_gearman
+    - check_mountpoints.py
+    - check_nofile_limit.sh
+    - check_photomon
+    - check_raid

@@ -1,0 +1,9 @@
+---
+- hosts: hackaton-remote
+#  remote_user: root
+  become: yes
+#  vars_files:
+#     - "group_vars/{{inventory_file}}/elk-serv.yml"
+
+  roles:
+    - { role: nagios-nrpe, tags: nagios-nrpe }

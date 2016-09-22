@@ -1,0 +1,15 @@
+---
+- name: reload nagios3
+  service: >
+    name=nagios3
+    state=reloaded
+
+- name: start nagios3
+  service: >
+    name=nagios3
+    state=started
+
+- name: restart nagios-nrpe-server
+  service: >
+    name=nagios-nrpe-server
+    state=restarted

@@ -1,0 +1,8 @@
+---
+- name: copy nagios plugins
+  copy: >
+    src=plugins/{{ item }}
+    dest=/usr/lib/nagios/plugins
+    mode=0755
+  with_items:
+    - check_mongos.py

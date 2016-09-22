@@ -1,0 +1,30 @@
+systemLog:
+   destination: file
+   path: {{ item.logpath }}
+   logAppend: true
+net:
+{% if item.ip is defined %}
+   bindIp: {{ item.ip }}
+{% else %}
+   bindIp: 127.0.0.1
+{% endif %}
+{% if item.port is defined %}
+   port: {{ item.port }}
+{% endif %}
+   http:
+      enabled: false
+{% if item.auth is defined %}
+   ssl:
+      mode: preferSSL
+      PEMKeyFile: /etc/mongodb/ssl/{{ inventory_hostname }}.pem
+      CAFile: /etc/mongodb/ssl/ca.crt
+      clusterFile: /etc/mongodb/ssl/{{ inventory_hostname }}.pem
+security:
+   clusterAuthMode: {{ item.auth }}
+{% endif %}
+sharding:
+{% if mongodb.version >= "3.2" and mongodb.configsvr.replication %}
+   configDB: {{ item.replset }}/{{ item.configdb }}
+{% else %}
+   configDB: {{ item.configdb }}
+{% endif %}

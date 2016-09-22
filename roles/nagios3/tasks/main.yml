@@ -1,0 +1,46 @@
+---
+- include: install.yml
+  tags:
+    - install_nagios3
+    - install
+
+- include: preconfigure.yml
+  tags:
+    - preconfigure_nagios3
+    - preconfigure
+
+- include: configure.yml
+  tags:
+    - configure_nagios3
+    - configure
+
+- include: contacts.yml
+  tags:
+    - contacts_nagios3
+    - contacts
+
+- include: security.yml
+  tags:
+    - security_nagios3
+    - security
+
+- include: htpasswd.yml
+  tags:
+    - htpasswd_nagios3
+    - htpasswd
+
+- include: postinstall.yml
+  tags:
+    - postinstall_nagios3
+    - postinstall
+
+- include: plugins.yml
+  tags:
+    - plugins_nagios3
+    - plugins
+
+- include: failover.yml
+  when: nagios3.master is defined
+  tags:
+    - failover_nagios3
+    - failover

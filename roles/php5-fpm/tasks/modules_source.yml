@@ -1,0 +1,66 @@
+---
+- name: git clone source of modules
+  git: >
+    repo={{ item.repo }}
+    dest=/usr/src/{{ item.dest }}
+    accept_hostkey=yes
+  with_items: "{{ php_modules_source }}"
+  when: php_modules_source|lower != 'none' and item.name != "phalcon"
+
+- name: git clone source of modules
+  git: >
+    repo={{ item.repo }}
+    dest=/usr/src/{{ item.dest }}
+    version=phalcon-v{{ item.version }}
+    depth=1
+    accept_hostkey=yes
+    force=yes
+  with_items: "{{ php_modules_source }}"
+  when: php_modules_source|lower != 'none' and item.name == "phalcon"
+
+- name: install phalcon module dependencies
+  apt: >
+    name={{ item[0] }}
+  with_nested:
+    - [ 'autoconf', 'gcc', 'libpcre3-dev', 'php5-dev', 'php5-mysql' ]
+    - '{{ php_modules_source }}'
+  when: php_modules_source|lower != 'none' and item[1].name == "phalcon"
+
+- name: build and install source modules
+  shell: >
+    cd /usr/src/{{ item.dest }} && phpize ; \
+    cd /usr/src/{{ item.dest }} && ./configure {{ item.configure|default(None) }} ; \
+    cd /usr/src/{{ item.dest }} && make && make install
+  with_items: "{{ php_modules_source }}"
+  when: php_modules_source|lower != 'none' and item.name != "phalcon"
+  notify:
+    - reload php5-fpm
+
+- name: build and install source modules
+  shell: >
+    cd /usr/src/{{ item.dest }}/build && ./install
+  with_items: "{{ php_modules_source }}"
+  when: php_modules_source|lower != 'none' and item.name == "phalcon"
+  notify:
+    - reload php5-fpm
+
+- name: create modules configuration files
+  copy: >
+    content='extension={{ item.name }}.so{{ '\n' }}'
+    dest=/etc/php5/mods-available/{{ item.name }}.ini
+  with_items: "{{ php_modules_source }}"
+  when: php_modules_source|lower != 'none'
+  notify:
+    - reload php5-fpm
+
+- name: create symlinks for php modules configuration files
+  file: >
+    src=/etc/php5/mods-available/{{ item[0].name }}.ini
+    dest=/etc/php5/{{ item[1] }}/conf.d/20-{{ item[0].name }}.ini
+    state=link
+  with_nested:
+    - '{{ php_modules_source }}'
+    - [ 'cli', 'fpm' ]
+  when: php_modules_source|lower != 'none'
+  notify:
+    - reload php5-fpm

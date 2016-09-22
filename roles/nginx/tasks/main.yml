@@ -1,0 +1,37 @@
+---
+- include: install.yml
+  tags:
+    - install_nginx
+    - install
+
+- include: configure.yml
+  tags:
+    - configure_nginx
+    - configure
+
+- include: htpasswd.yml
+  when: nginx_htpasswd is defined and nginx_htpasswd
+  tags:
+    - htpasswd_nginx
+    - htpasswd
+
+- include: ssl.yml
+  tags:
+    - ssl_nginx
+    - ssl
+
+- include: upstreams.yml
+  when: nginx_upstreams is defined and nginx_upstreams
+  tags:
+    - upstreams_nginx
+    - upstreams
+
+- include: maps.yml
+  tags:
+    - maps_nginx
+    - maps
+
+- include: vhosts.yml
+  tags:
+    - vhosts_nginx
+    - vhosts

@@ -1,0 +1,88 @@
+---
+- include: sysctl.yml
+  tags:
+    - sysctl_mongodb
+    - sysctl
+
+- include: install_2.4.yml
+  when: mongodb.version < "2.6"
+  tags:
+    - install_mongodb
+    - install
+
+- include: install_2.6.yml
+  when: mongodb.version >= "2.6" and mongodb.version < "3.0"
+  tags:
+    - install_mongodb
+    - install
+
+- include: install_3.0.yml
+  when: mongodb.version >= "3.0" and mongodb.version < "3.2"
+  tags:
+    - install_mongodb
+    - install
+
+- include: install_3.2.yml
+  when: mongodb.version >= "3.2"
+  tags:
+    - install_mongodb
+    - install
+
+- include: auth.yml
+  when: mongodb.version >= "3.0" and mongodb.auth is defined
+  tags:
+    - auth_mongodb
+    - auth
+
+- include: configure_2.4.yml
+  when: mongodb.version < "2.6"
+  tags:
+    - configure_mongodb
+    - configure
+
+- include: configure_2.6.yml
+  when: mongodb.version >= "2.6" and mongodb.version < "3.0"
+  tags:
+    - configure_mongodb
+    - configure
+
+- include: configure_3.0.yml
+  when: mongodb.version >= "3.0" and mongodb.version < "3.2"
+  tags:
+    - configure_mongodb
+    - configure
+
+- include: configure_3.2.yml
+  when: mongodb.version >= "3.2"
+  tags:
+    - configure_mongodb
+    - configure
+
+- include: rsinitiate.yml
+  when: mongodb.replication and mongodb.replset.primary == inventory_hostname
+  tags:
+    - replset_initiate
+
+- include: adduser.yml
+  when: mongodb.version >= "3.0" and mongodb.auth is defined and
+        (mongodb.replication and mongodb.replset.primary == inventory_hostname)
+  tags:
+    - adduser_mongodb
+    - adduser
+
+- include: rsadd.yml
+  when: mongodb.auth is not defined and
+        (mongodb.replication and mongodb.replset.primary == inventory_hostname)
+  tags:
+    - replset_add
+
+- include: rsadd_auth.yml
+  when: mongodb.auth is defined and
+        (mongodb.replication and mongodb.replset.primary == inventory_hostname)
+  tags:
+    - replset_add
+
+- include: logrotate.yml
+  tags:
+    - logrotate_mongodb
+    - logrotate

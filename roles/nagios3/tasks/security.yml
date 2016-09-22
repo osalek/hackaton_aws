@@ -1,0 +1,12 @@
+---
+- name: stop nagios3 service
+  service: name=nagios3 state=stopped
+
+- name: activate external commands
+  command: "{{ item }}"
+  with_items:
+    - dpkg-statoverride --update --force --add nagios www-data 2710 /var/lib/nagios3/rw
+    - dpkg-statoverride --update --force --add nagios nagios 751 /var/lib/nagios3
+    - adduser www-data nagios
+  notify:
+    - start nagios3

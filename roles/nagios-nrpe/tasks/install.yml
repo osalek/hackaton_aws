@@ -1,0 +1,7 @@
+---
+- name: install nagios-nrpe-server
+  apt: >
+    name=nagios-nrpe-server
+    state=present
+    update_cache=yes
+    cache_valid_time=600

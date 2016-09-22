@@ -1,0 +1,38 @@
+---
+- include: install.yml
+  tags:
+    - install_nagios-nrpe
+    - install
+
+- include: configure.yml
+  tags:
+    - configure_nagios-nrpe
+    - configure
+
+- include: plugin_mongodb.yml
+  when: groups.mongodb is defined and inventory_hostname in groups.mongodb
+  tags:
+    - plugin_mongodb
+    - plugins
+
+- include: plugin_mongos.yml
+  tags:
+    - plugin_mongos
+    - plugins
+
+- include: plugin_rabbitmq.yml
+  when: groups.rabbitmq is defined and inventory_hostname in groups.rabbitmq
+  tags:
+    - plugin_rabbitmq
+    - plugins
+
+- include: plugin_redis.yml
+  when: groups.redis is defined and inventory_hostname in groups.redis
+  tags:
+    - plugin_redis
+    - plugins
+
+- include: plugins.yml
+  tags:
+    - plugins_nagios-nrpe
+    - plugins

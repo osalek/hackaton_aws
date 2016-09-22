@@ -1,0 +1,45 @@
+---
+php_config:
+  - name: default
+    vars:
+      - expose_php = Off
+      - cgi.fix_pathinfo = 0
+      - max_execution_time = 300
+      - memory_limit = 256M
+      - post_max_size = 16M
+      - upload_max_filesize = 2M
+      - max_input_time = 300
+      - short_open_tag = On
+php5_modules: [common,curl]
+php5_modules_deb:
+php_modules:
+php_modules_pear:
+php_modules_pecl:
+php_modules_source:
+php_fpm_conf:
+  - name: global
+    vars:
+      - pid = /var/run/php5-fpm.pid
+      - error_log = /var/log/php5-fpm/php5-fpm.log
+      - log_level = warning
+      - daemonize = yes
+      - include=/etc/php5/fpm/pool.d/*.conf
+php_fpm_pools:
+  - name: www
+    vars:
+      - user = www-data
+      - group = www-data
+      - listen = 127.0.0.1:9000
+      - listen.backlog = 65536
+      - pm = static
+      - pm.max_children = 50
+      - pm.max_requests = 300
+      - request_terminate_timeout = 300s
+      - rlimit_files = 65536
+      - rlimit_core = unlimited
+      - chdir = /
+      - php_flag[display_errors] = off
+      - php_admin_value[error_log] = /var/log/php5-fpm/error.$pool.log
+      - php_admin_flag[log_errors] = on
+php_ver:
+timezone: America/New_York

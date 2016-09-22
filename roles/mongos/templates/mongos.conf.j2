@@ -1,0 +1,62 @@
+#
+# mongos.conf ({{ item.name }})
+#
+
+# MANDATORY: 1 or 3 comma separated config servers
+configdb = {{ item.configdb }}
+
+# Specify port number
+# If the Mongo database server is not running locally, we can use its port number
+{% if item.port is defined %}
+port = {{ item.port }}
+{% else%}
+port = 27017
+{% endif %}
+
+# Log file to send write to instead of stdout. Has to be a file, not directory
+logpath = {{ item.logpath }}
+
+# Append to logpath instead of over-writing
+logappend = true
+
+# fork and run in background
+fork = true
+
+# Quieter output
+#quiet = true
+
+# Comma separated list of ip addresses to listen on. All local ips by default
+{% if item.ip is defined %}
+bind_ip = {{ item.ip }}
+{% else %}
+bind_ip = 127.0.0.1
+{% endif %}
+
+# Max number of simultaneous connections
+#maxConns =
+
+# Private key for cluster authentication - Replica Set only
+#keyFile = filename
+
+# Verbose logging output.
+#verbose = true
+
+# Alternative directory for UNIX domain sockets
+#unixSocketPrefix = /tmp
+
+{% if mongodb.version >= "3.0" %}
+# Sets the permission for UNIX domain socket file
+filePermissions = 0777
+
+{% endif %}
+# Upgrade meta data version
+#upgrade = true
+
+# Maximum amount of data per chunk
+#chunkSize =
+
+# Enable IPv6 support (disabled by default)
+#ipv6 = true
+
+# Allow JSONP access via http (has security implications)
+#jsonp = true

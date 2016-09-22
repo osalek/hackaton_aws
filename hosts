@@ -1,0 +1,8 @@
+[hackaton-server]
+# rp.foms.co ansible_port=22 ansible_host=54.227.197.45
+# rp.foms.co ansible_port=2222 ansible_host=127.0.0.1
+main.foms.co ansible_port=22 ansible_host=52.29.121.179
+
+[hackaton-remote]
+#rp.foms.co ansible_port=2222 ansible_host=127.0.0.1
+main.foms.co ansible_port=22 ansible_host=54.175.145.166
