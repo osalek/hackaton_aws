@@ -1,0 +1,14 @@
+prefix="{{ aws_asg_hostname_prefix }}"
+domain="{{ aws_asg_hostname_domain }}"
+
+for i in {1..3}
+  do
+    exist_domain=`dig $prefix$i.$domain +short`
+
+  if [ -z "$exist_domain" ]
+    then
+      set_fqdn="$prefix$i.$domain"
+      echo $set_fqdn
+    break
+  fi
+done

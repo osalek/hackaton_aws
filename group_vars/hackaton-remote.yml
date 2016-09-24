@@ -3,3 +3,6 @@ nagios_nrpe_plugins:
   - name: check_all_disks
     command: check_disk
     options: -w '20%' -c '10%' -e
+
+aws_asg_hostname_prefix: nx
+aws_asg_hostname_domain: hackathon.ml

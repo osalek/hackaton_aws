@@ -1,0 +1,24 @@
+---
+- name: install dependencies
+  apt: >
+    name=dnsutils
+
+- name: copy hostname script
+  template: >
+    src=hostname.sh.j2
+    dest=/var/tmp/hostname.sh
+
+- name: get free hostname
+  command: >
+    bash /var/tmp/hostname.sh
+  changed_when: false
+  register: host_name
+
+- name: set hostname
+  hostname: >
+    name={{ host_name.stdout }}
+
+- name: delete hostname script
+  file: >
+    path=/var/tmp/hostname.sh
+    state=absent

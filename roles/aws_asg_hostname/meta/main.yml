@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Viacheslav Kuzmenko
+  description: setup hostname for autoscaling host
+  company: ZEO Alliance
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+    - wheezy
+  categories:
+  - cloud
+dependencies: []

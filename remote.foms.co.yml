@@ -6,4 +6,5 @@
 #     - "group_vars/{{inventory_file}}/elk-serv.yml"
 
   roles:
+    - { role: aws_asg_hostname, tags: aws_asg_hostname }
     - { role: nagios-nrpe, tags: nagios-nrpe }
